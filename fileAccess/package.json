@@ -1,0 +1,19 @@
+{
+  "name": "file_access",
+  "version": "1.0.0",
+  "description": "base of final int apps project",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/rorygoodman/DistributedFileSystem.git"
+  },
+  "author": "rory goodman",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/rorygoodman/DistributedFileSystem/issues"
+  },
+  "homepage": "https://github.com/rorygoodman/DistributedFileSystem#readme"
+}
