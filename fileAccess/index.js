@@ -3,10 +3,17 @@ const sqlite3 = require('sqlite3').verbose();
 const fileUpload = require('express-fileupload');
 const express = require('express');
 const mv = require('mv');
-
+const bp = require('body-parser');
+const multiparty =  require('multiparty')
+const formidable = require('express-formidable');
+const fs = require('fs');
 var app = express();
 
-app.use(fileUpload());
+
+app.use(bp.json());
+app.use(bp.urlencoded({ extended: false }));
+app.use(formidable());
+//app.use(fileUpload());
 app.listen(3000);
 const request=require('request');
 var fileCount=0;
@@ -31,20 +38,25 @@ function addUser(username){
   });
 }
 app.post('/upload',function (req, res) { 
-	if (!req.files)
+  // contains non-file fields 
+  if (!req.files)
     return res.status(400).send('No files were uploaded.');
- 
- 	 // The name of the input field (i.e. "sampleFile") is used to retrieve the uploaded file
- 	 let file = req.files.file;
+   // The name of the input field (i.e. "sampleFile") is used to retrieve the uploaded file
+   let file = req.files.file;
+   console.log(req.fields.username);
     
-  	// Use the mv() method to place the file somewhere on your server
-  	file.mv('files/'+file.name, function(err) {
-    if (err){
-     	return res.status(500).send(err);
-    }
-    db.run("INSERT INTO files(id,uploader,path,lastChanged) VALUES ("+fileCount+","+req.user+",files/"+file.name+",SELECT date('now');)");
-    fileCount++;
-   	res.send('File uploaded!');
+    // Use the mv() method to place the file somewhere on your server
+    var oldpath = file.path;
+    var newpath = 'files/' + file.name;
+    fs.rename(oldpath, newpath, function (err) {
+      if (err) throw err;
+      db.run("INSERT INTO files(id,uploader,path,lastChanged) VALUES ("+fileCount+","+req.fields.username+",files/"+file.name+",date('now'))");
+      fileCount++;
+      res.write('File uploaded and moved!');
+      res.end();
+    });
+    
+	/**/
 
 
-})});   
+});   
